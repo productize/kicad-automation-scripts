@@ -39,6 +39,15 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 def eeschema_plot_schematic(output_directory):
+    # The "Not Found" window pops up if libraries required by the schematic have
+    # not been found. This can be ignored as all symbols are placed inside the
+    # *-cache.lib file:
+    try:
+        wait_for_window('Not Found', 'Not Found', 3)
+        xdotool(['key', 'KP_Enter'])
+    except RuntimeError:
+        pass
+
     wait_for_window('eeschema', '\[')
 
     logger.info('Focus main eeschema window')

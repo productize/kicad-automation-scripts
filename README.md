@@ -20,17 +20,28 @@ git clone https://github.com/productize/docker-kicad.git
 docker build -t productize/kicad docker-kicad
 ```
 
-Then, launch the image with `<kicad project>` pointing to your KiCad project and
-`<kicad library>` pointing to KiCad library on your filesystem:
+Then, launch the image with `<kicad project>` pointing to a KiCad project on
+your filesystem:
 
 ```
 cd docker-automation-scripts    # So that `pwd` can retrieve the path
-docker run --rm -it -v `pwd`:/kicad-automation/ -v <kicad project>:/kicad-project -v <kicad library>:/kicad-library productize/kicad
+docker run --rm -it -v `pwd`:/kicad-automation/ -v <kicad project>:/kicad-project productize/kicad
 ```
 
 Once the image is launched, run automation scripts inside it:
 
 ```
+/kicad-automation/eeschema/install-deps.sh
+/kicad-automation/eeschema/export_schematic.py /kicad-project/<some-schematic>.sch
+```
+
+To use external libraries (e.g. when the `<some schematic>-cache.lib` file is
+not present or incomplete), run the image with `<kicad library>` pointing to a
+directory with KiCad libraries on your filesystem:
+
+```
+docker run --rm -it -v `pwd`:/kicad-automation/ -v <kicad project>:/kicad-project -v <kicad library>:/kicad-library productize/kicad
+
 export PRODUCTIZE_KICAD=/kicad-library # (for Productize projects)
 /kicad-automation/eeschema/install-deps.sh
 /kicad-automation/eeschema/export_schematic.py /kicad-project/<some-schematic>.sch
