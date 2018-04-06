@@ -43,7 +43,11 @@ def eeschema_plot_schematic(output_directory):
     # not been found. This can be ignored as all symbols are placed inside the
     # *-cache.lib file:
     try:
-        wait_for_window('Not Found', 'Not Found', 3)
+        nf_title = 'Not Found'
+        wait_for_window(nf_title, nf_title, 3)
+
+        logger.info('Dismiss eeschema library warning window')
+        xdotool(['search', '--name', nf_title, 'windowfocus'])
         xdotool(['key', 'KP_Enter'])
     except RuntimeError:
         pass
