@@ -28,7 +28,7 @@ repo_root = os.path.dirname(eeschema_dir)
 sys.path.append(repo_root)
 
 from util import file_util
-from export_util import (
+from .export_util import (
     PopenContext,
     xdotool,
     wait_for_window,
@@ -88,9 +88,7 @@ def eeschema_plot_schematic(output_directory):
     logger.info('Wait before shutdown')
     time.sleep(2)
 
-def export_schematic(schematic):
-    schematic_file = os.path.join(eeschema_dir, schematic)
-    output_dir = os.path.join(eeschema_dir, 'build')
+def export_schematic(schematic, output_dir):
     file_util.mkdir_p(output_dir)
 
     screencast_output_file = os.path.join(output_dir, 'export_schematic_screencast.ogv')
@@ -98,10 +96,10 @@ def export_schematic(schematic):
     schematic_output_png_file = os.path.join(output_dir, 'schematic.png')
 
     with recorded_xvfb(screencast_output_file, width=800, height=600, colordepth=24):
-        with PopenContext(['eeschema', schematic_file], close_fds=True) as eeschema_proc:
+        with PopenContext(['eeschema', schematic], close_fds=True) as eeschema_proc:
             eeschema_plot_schematic(output_dir)
             eeschema_proc.terminate()
     
 if __name__ == '__main__':
-    export_schematic(sys.argv[1])
+    export_schematic(sys.argv[1], sys.argv[2])
 
