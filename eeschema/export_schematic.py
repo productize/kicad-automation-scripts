@@ -28,7 +28,7 @@ repo_root = os.path.dirname(eeschema_dir)
 sys.path.append(repo_root)
 
 from util import file_util
-from .export_util import (
+from export_util import (
     PopenContext,
     xdotool,
     wait_for_window,
