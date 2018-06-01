@@ -38,7 +38,10 @@ from export_util import (
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-def eeschema_plot_schematic(output_directory):
+def eeschema_plot_schematic(output_directory, file_format):
+    if  file_format not in ('PDF', 'SVG'):
+        raise ValueError("file_format should be 'PDF' or 'SVG'")
+
     # The "Not Found" window pops up if libraries required by the schematic have
     # not been found. This can be ignored as all symbols are placed inside the
     # *-cache.lib file:
@@ -67,20 +70,33 @@ def eeschema_plot_schematic(output_directory):
 
     logger.info('Enter build output directory')
     xdotool(['type', output_directory])
-
-    logger.info('Select PDF plot format')
-    xdotool([
-        'key',
-        'Tab',
-        'Tab',
-        'Tab',
-        'Tab',
-        'Tab',
-        'Up',
-        'Up',
-        'Up',
-        'space',
-    ])
+    if file_format == 'PDF':
+        logger.info('Select PDF plot format')
+        xdotool([
+            'key',
+            'Tab',
+            'Tab',
+            'Tab',
+            'Tab',
+            'Tab',
+            'Up',
+            'Up',
+            'Up',
+            'space',
+        ])
+    else:
+        logger.info('Select SVG plot format')
+        xdotool([
+            'key',
+            'Tab',
+            'Tab',
+            'Tab',
+            'Tab',
+            'Tab',
+            'Up',
+            'Up',
+            'space',
+        ])
 
     logger.info('Plot')
     xdotool(['key', 'Return'])
@@ -88,7 +104,7 @@ def eeschema_plot_schematic(output_directory):
     logger.info('Wait before shutdown')
     time.sleep(2)
 
-def export_schematic(schematic, output_dir):
+def export_schematic(schematic, output_dir, file_format):
     file_util.mkdir_p(output_dir)
 
     screencast_output_file = os.path.join(output_dir, 'export_schematic_screencast.ogv')
@@ -97,9 +113,9 @@ def export_schematic(schematic, output_dir):
 
     with recorded_xvfb(screencast_output_file, width=800, height=600, colordepth=24):
         with PopenContext(['eeschema', schematic], close_fds=True) as eeschema_proc:
-            eeschema_plot_schematic(output_dir)
+            eeschema_plot_schematic(output_dir, file_format)
             eeschema_proc.terminate()
-    
+
 if __name__ == '__main__':
-    export_schematic(sys.argv[1], sys.argv[2])
+    export_schematic(sys.argv[1], sys.argv[2], sys.argv[3])
 
