@@ -38,7 +38,7 @@ from eeschema.export_util import (
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-def eeschema_plot_schematic(output_directory, file_format):
+def eeschema_plot_schematic(output_directory, file_format, all_pages):
     if  file_format not in ('PDF', 'SVG'):
         raise ValueError("file_format should be 'PDF' or 'SVG'")
 
@@ -70,33 +70,28 @@ def eeschema_plot_schematic(output_directory, file_format):
 
     logger.info('Enter build output directory')
     xdotool(['type', output_directory])
+    command_list = [
+            'key',
+            'Tab',
+            'Tab',
+            'Tab',
+            'Tab',
+            'Tab',
+            'space',
+    ]
     if file_format == 'PDF':
         logger.info('Select PDF plot format')
-        xdotool([
-            'key',
-            'Tab',
-            'Tab',
-            'Tab',
-            'Tab',
-            'Tab',
-            'Up',
-            'Up',
-            'Up',
-            'space',
-        ])
+        for i in range(3):
+            command_list.insert(6, 'Up')
     else:
         logger.info('Select SVG plot format')
-        xdotool([
-            'key',
-            'Tab',
-            'Tab',
-            'Tab',
-            'Tab',
-            'Tab',
-            'Up',
-            'Up',
-            'space',
-        ])
+        for i in range(2):
+            command_list.insert(6, 'Up')
+
+    if not all_pages:   # all pages is default option
+        command_list.extend(['Tab', 'Tab', 'Tab', 'Tab'])
+    print(command_list)
+    xdotool(command_list)
 
     logger.info('Plot')
     xdotool(['key', 'Return'])
@@ -104,7 +99,7 @@ def eeschema_plot_schematic(output_directory, file_format):
     logger.info('Wait before shutdown')
     time.sleep(2)
 
-def export_schematic(schematic, output_dir, file_format):
+def export_schematic(schematic, output_dir, file_format, all_pages):
     file_util.mkdir_p(output_dir)
 
     screencast_output_file = os.path.join(output_dir, 'export_schematic_screencast.ogv')
@@ -113,9 +108,9 @@ def export_schematic(schematic, output_dir, file_format):
 
     with recorded_xvfb(screencast_output_file, width=800, height=600, colordepth=24):
         with PopenContext(['eeschema', schematic], close_fds=True) as eeschema_proc:
-            eeschema_plot_schematic(output_dir, file_format)
+            eeschema_plot_schematic(output_dir, file_format, all_pages)
             eeschema_proc.terminate()
 
 if __name__ == '__main__':
-    export_schematic(sys.argv[1], sys.argv[2], sys.argv[3])
+    export_schematic(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]== 'True')
 
