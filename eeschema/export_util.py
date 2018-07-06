@@ -28,7 +28,7 @@ repo_root = os.path.dirname(eeschema_dir)
 sys.path.append(repo_root)
 
 from xvfbwrapper import Xvfb
-from util import file_util, rev_info
+from util import file_util
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)

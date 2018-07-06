@@ -39,7 +39,8 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 def eeschema_plot_schematic(output_directory, file_format):
-    if  file_format not in ('PDF', 'SVG'):
+    file_format = file_format.upper();
+    if file_format not in ('PDF', 'SVG'):
         raise ValueError("file_format should be 'PDF' or 'SVG'")
 
     # The "Not Found" window pops up if libraries required by the schematic have
@@ -104,7 +105,7 @@ def eeschema_plot_schematic(output_directory, file_format):
     logger.info('Wait before shutdown')
     time.sleep(2)
 
-def export_schematic(schematic, output_dir, file_format):
+def export_schematic(schematic, output_dir, file_format="SVG"):
     file_util.mkdir_p(output_dir)
 
     screencast_output_file = os.path.join(output_dir, 'export_schematic_screencast.ogv')
