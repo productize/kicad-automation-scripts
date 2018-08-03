@@ -13,13 +13,11 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-import argparse
 import datetime
 import logging
 import os
 import pcbnew
 import subprocess
-import tempfile
 
 from contextlib import contextmanager
 
@@ -49,8 +47,7 @@ def get_layer_name(kicad_layer_id):
 
 @contextmanager
 def get_plotter(pcb_filename, build_directory):
-    with versioned_board(pcb_filename) as board:
-        yield GerberPlotter(board, build_directory)
+    yield GerberPlotter(pcbnew.LoadBoard(pcb_filename), build_directory)
 
 class GerberPlotter(object):
     def __init__(self, board, build_directory):
@@ -65,7 +62,8 @@ class GerberPlotter(object):
         self.plot_options.SetScale(1)
         self.plot_options.SetUseAuxOrigin(True)
         self.plot_options.SetMirror(False)
-        self.plot_options.SetExcludeEdgeLayer(True)
+        self.plot_options.SetExcludeEdgeLayer(False)
+        self.plot_controller.SetColorMode(True);
 
     def plot(self, layer, plot_format):
         logger.info('Plotting layer %s (kicad layer=%r)', get_layer_name(layer), layer)
@@ -106,26 +104,3 @@ class GerberPlotter(object):
             '%s-drl_map.pdf' % (board_name,)
         )
         return drill_file_name, map_file_name
-
-def get_version_info():
-    git_rev = subprocess.check_output([
-        'git',
-        'rev-parse',
-        '--short',
-        'HEAD',
-    ]).strip()
-
-    return {
-        'revision': git_rev,
-        'date': datetime.date.today().strftime('%Y-%m-%d'),
-    }
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Test pcb util')
-    parser.add_argument('input_file', help='Input .kicad_pcb file')
-    args = parser.parse_args()
-    with versioned_board(args.input_file) as board:
-        logger.info('Loaded %s', board.GetFileName())
-        for module in board.GetModules():
-            logger.info('Module %s: %s', module.GetReference(), module.GetValue())
- 
