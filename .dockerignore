@@ -1,0 +1,15 @@
+# Not needed for running
+README.md
+Dockerfile
+
+# Python stuff
+env/
+*.pyc
+__pycache__/
+
+# Git stuff
+.git
+.gitignore
+
+# MacOS stuff
+.DS_Store
