@@ -105,26 +105,25 @@ def set_default_plot_option():
     # plot_schematic() does not know which option is set (it assumes HPGL)
     opt_file_path = os.path.expanduser('~/.config/kicad/')
     in_p = os.path.join(opt_file_path, 'eeschema')
-    out_p = os.path.join(opt_file_path, 'eeschema.new')
-    in_f = open(in_p)
-    out_f = open(out_p, 'w')
-    for in_line in in_f:
-        param, value = in_line.split('=', 1)
-        if param == 'PlotFormat':
-            out_line = 'PlotFormat=0\n'  # 1: ps, 4: pdf, 5:svg, 3: dxf, 0: hpgl
-        else:
-            out_line = in_line
-        out_f.write(out_line)
-    out_f.close()
-    os.remove(in_p)
-    os.rename(out_p, in_p)
+    if os.path.exists(in_p):
+        out_p = os.path.join(opt_file_path, 'eeschema.new')
+        in_f = open(in_p)
+        out_f = open(out_p, 'w')
+        for in_line in in_f:
+            param, value = in_line.split('=', 1)
+            if param == 'PlotFormat':
+                out_line = 'PlotFormat=0\n'  # 1: ps, 4: pdf, 5:svg, 3: dxf, 0: hpgl
+            else:
+                out_line = in_line
+            out_f.write(out_line)
+        out_f.close()
+        os.remove(in_p)
+        os.rename(out_p, in_p)
 
 def export_schematic(schematic, output_dir, file_format="SVG", all_pages=False):
     file_util.mkdir_p(output_dir)
 
     screencast_output_file = os.path.join(output_dir, 'export_schematic_screencast.ogv')
-    schematic_output_pdf_file = os.path.join(output_dir, 'schematic.pdf')
-    schematic_output_png_file = os.path.join(output_dir, 'schematic.png')
 
     with recorded_xvfb(screencast_output_file, width=800, height=600, colordepth=24):
         set_default_plot_option()
