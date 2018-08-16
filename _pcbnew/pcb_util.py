@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 #   Copyright 2015-2016 Scott Bezek and the splitflap contributors
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,6 +37,11 @@ _LAYER_NAME = {
     pcbnew.Edge_Cuts: 'Edge.Cuts',
     #TODO: add the rest
 }
+
+def layer_from_name(layer_name):
+    for layer, name in _LAYER_NAME.iteritems():
+        if name == layer_name:
+            return layer
 
 def get_layer_name(kicad_layer_id):
     if kicad_layer_id in _LAYER_NAME:
