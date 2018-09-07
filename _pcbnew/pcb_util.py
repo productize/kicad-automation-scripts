@@ -23,35 +23,67 @@ from contextlib import contextmanager
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-_LAYER_NAME = {
-    pcbnew.F_Cu: 'F.Cu',
-    pcbnew.B_Cu: 'B.Cu',
-    pcbnew.F_Adhes: 'F.Adhes',
-    pcbnew.B_Adhes: 'B.Adhes',
-    pcbnew.F_SilkS: 'F.SilkS',
-    pcbnew.B_SilkS: 'B.SilkS',
-    pcbnew.F_Paste: 'F.Paste',
-    pcbnew.B_Paste: 'B.Paste',
-    pcbnew.F_Mask: 'F.Mask',
-    pcbnew.B_Mask: 'B.Mask',
-    pcbnew.Edge_Cuts: 'Edge.Cuts',
-    #TODO: add the rest
+# TODO: figure out how to index pcbnew.g_ColorRefs
+# I gave up, copied from colors.cpp
+_COLOR = {
+    pcbnew.BLACK:        [0,    0,   0],
+    pcbnew.DARKDARKGRAY: [72,   72,  72],
+    pcbnew.DARKGRAY:     [132,  132, 132],
+    pcbnew.LIGHTGRAY:    [194,  194, 194],
+    pcbnew.WHITE:        [255,  255, 255],
+    pcbnew.LIGHTYELLOW:  [194,  255, 255],
+    pcbnew.DARKBLUE:     [72,   0,   0],
+    pcbnew.DARKGREEN:    [0,    72,  0],
+    pcbnew.DARKCYAN:     [72,   72,  0],
+    pcbnew.DARKRED:      [0,    0,   72],
+    pcbnew.DARKMAGENTA:  [72,   0,   72],
+    pcbnew.DARKBROWN:    [0,    72,  72],
+    pcbnew.BLUE:         [132,  0,   0],
+    pcbnew.GREEN:        [0,    132, 0],
+    pcbnew.CYAN:         [132,  132, 0],
+    pcbnew.RED:          [0,    0,   132],
+    pcbnew.MAGENTA:      [132,  0,   132],
+    pcbnew.BROWN:        [0,    132, 132],
+    pcbnew.LIGHTBLUE:    [194,  0,   0],
+    pcbnew.LIGHTGREEN:   [0,    194, 0],
+    pcbnew.LIGHTCYAN:    [194,  194, 0],
+    pcbnew.LIGHTRED:     [0,    0,   194],
+    pcbnew.LIGHTMAGENTA: [194,  0,   194],
+    pcbnew.YELLOW:       [0,    194, 194],
+    pcbnew.PUREBLUE:     [255,  0,   0],
+    pcbnew.PUREGREEN:    [0,    255, 0],
+    pcbnew.PURECYAN:     [255,  255, 0],
+    pcbnew.PURERED:      [0,    0,   255],
+    pcbnew.PUREMAGENTA:  [255,  0,   255],
+    pcbnew.PUREYELLOW:   [0,    255, 255]
 }
 
-def layer_from_name(layer_name):
-    for layer, name in _LAYER_NAME.iteritems():
-        if name == layer_name:
-            return layer
+def open_board(pcb_filename):
+    return pcbnew.LoadBoard(pcb_filename)
 
-def get_layer_name(kicad_layer_id):
-    if kicad_layer_id in _LAYER_NAME:
-        return _LAYER_NAME[kicad_layer_id]
-    else:
-        return 'Unknown(%r)' % (kicad_layer_id,)
+def layer_from_name(pcb, layer_name):
+    return pcb.GetLayerID(layer_name)
+
+def get_layer_name(pcb, layer_id):
+    return pcb.GetLayerName(layer_id)
 
 @contextmanager
 def get_plotter(pcb_filename, build_directory):
     yield GerberPlotter(pcbnew.LoadBoard(pcb_filename), build_directory)
+
+def get_layers(pcb_filename):
+    pcb = pcbnew.LoadBoard(pcb_filename)
+    stack = pcb.GetEnabledLayers().UIOrder();
+
+    layers = []
+    for layer_id in stack:
+        print pcb.GetLayerName(layer_id)
+        layers.append({
+            'name': pcb.GetLayerName(layer_id),
+            'color': _COLOR[pcbnew.ColorGetBase(pcb.GetLayerColor(layer_id))],
+            'visible': pcb.IsLayerVisible(layer_id)
+        })
+    return layers
 
 class GerberPlotter(object):
     def __init__(self, board, build_directory):
@@ -70,8 +102,8 @@ class GerberPlotter(object):
         self.plot_controller.SetColorMode(True);
 
     def plot(self, layer, plot_format):
-        logger.info('Plotting layer %s (kicad layer=%r)', get_layer_name(layer), layer)
-        layer_name = get_layer_name(layer)
+        layer_name = get_layer_name(self.board, layer)
+        logger.info('Plotting layer %s (kicad layer=%r)', layer_name, layer)
         self.plot_controller.SetLayer(layer)
         self.plot_controller.OpenPlotfile(layer_name, plot_format , 'Plot')
         output_filename = self.plot_controller.GetPlotFileName()
