@@ -1,0 +1,17 @@
+# KiCad temporary file.
+*.000
+# KiCad backup of schematic file.
+*.bak
+# (Undocumented) backup of EESchema schematic file
+_saved_*.sch
+# backup of the PCB Layout file.
+*.-save.kicad_pcb
+*.kicad_pcb-bak
+# backup file for the symbol editor of the .dcm file.
+*.bck
+# report file, for documentation.
+*.rpt
+# ERC report files
+*.erc
+# Netlists
+*.net

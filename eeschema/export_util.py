@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+#   Copyright 2019 Productize SPRL
 #   Copyright 2015-2016 Scott Bezek and the splitflap contributors
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,6 +21,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import psutil
 
 from contextlib import contextmanager
 
@@ -51,6 +53,20 @@ class PopenContext(subprocess.Popen):
 def xdotool(command):
     return subprocess.check_output(['xdotool'] + command)
 
+def clipboard_store(string):
+    p = subprocess.Popen(['xclip', '-selection', 'clipboard'], stdin=subprocess.PIPE)
+    outs, errs = p.communicate(input=string)
+    if (errs):
+        logger.error('Failed to store string in clipboard')
+        logger.error(errs)
+
+def clipboard_retrieve():
+    p = subprocess.Popen(['xclip', '-o', '-selection', 'clipboard'], stdout=subprocess.PIPE)
+    output = '';
+    for line in p.stdout:
+        output += line.decode()
+    return output;
+
 def wait_for_window(name, window_regex, timeout=10):
     DELAY = 0.5
     logger.info('Waiting for %s window...', name)
@@ -63,6 +79,25 @@ def wait_for_window(name, window_regex, timeout=10):
             pass
         time.sleep(DELAY)
     raise RuntimeError('Timed out waiting for %s window' % name)
+
+def wait_for_file_created_by_process(pid, file, timeout=5):
+    process = psutil.Process(pid)
+
+    DELAY = 0.05
+    for i in range(int(timeout/DELAY)):
+        if os.path.isfile(file):
+            if file in process.open_files():
+                logger.debug('Waiting for process to close file')
+                pass
+            else:
+                return
+        else:
+            logger.debug('Waiting for process to create file')
+            pass
+        time.sleep(DELAY)
+
+    raise RuntimeError('Timed out waiting for creation of %s' % file)
+
 
 @contextmanager
 def recorded_xvfb(video_filename, **xvfb_args):

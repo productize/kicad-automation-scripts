@@ -1,6 +1,10 @@
 # Not needed for running
 README.md
 Dockerfile
+test-projects/
+
+# Typical output folder
+output/
 
 # Python stuff
 env/

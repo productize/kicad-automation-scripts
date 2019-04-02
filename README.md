@@ -1,61 +1,82 @@
 KiCad automation scripts
 ========================
 
-A bunch of scripts to automate [KiCad] processes.
+A bunch of scripts to automate [KiCad] processes using a combination of the
+KiCAD Python library and UI automation with [xdotool].
 
 This work is based in big parts on Scott Bezek's scripts in his
 [split-flap display project][split-flap].
 For more info see his [excellent blog posts][scot's blog].
 
-Currently tested/working:
+Currently tested and working:
 
-- Exporting schematics to PDF
+- Exporting schematics to PDF and SVG
+- Exporting layouts to PDF and SVG
+- Running ERC on schematics
 
-## Getting started
+## Instalation
 
-First, build the [Docker image with KiCad][docker-kicad]:
+# Using Docker
 
-```
-git clone https://github.com/productize/docker-kicad.git
-docker build -t productize/kicad docker-kicad
-```
-
-Then, launch the image with `<kicad project>` pointing to a KiCad project on
-your filesystem:
+Build the docker image and run it:
 
 ```
-cd docker-automation-scripts    # So that `pwd` can retrieve the path
-docker run --rm -it -v `pwd`:/kicad-automation/ -v <kicad project>:/kicad-project productize/kicad
+docker build -t kicad-automation .
+docker run --rm -it -v <path to a kicad project>/kicad-project kicad-automation-scripts
 ```
 
-Once the image is launched, run automation scripts inside it:
+Or fetch it from [Dockerhub]:
 
 ```
-/kicad-automation/eeschema/install-deps.sh
-/kicad-automation/eeschema/export_schematic.py /kicad-project/<some-schematic>.sch
+docker run --rm -it -v <path to a kicad project>/kicad-project kicad-automation-scripts
 ```
 
-To use external libraries (e.g. when the `<some schematic>-cache.lib` file is
-not present or incomplete), run the image with `<kicad library>` pointing to a
-directory with KiCad libraries on your filesystem:
+# Installation on your own machine:
+
+If you want to use these scripts directly on your system, you should be able to
+get it to work by installing the folowing dependencies:
+
+This tool has the folowing dependencies:
+- KiCad
+- python
+- python-pip
+- xvfb
+- recordmydesktop
+- xdotool
+- xclip
+
+The Python dependencies (excluding KiCad) are listed in
+[eeschema/requirements.txt][eeschema/requirements.txt] an can be installed with
 
 ```
-docker run --rm -it -v `pwd`:/kicad-automation/ -v <kicad project>:/kicad-project -v <kicad library>:/kicad-library productize/kicad
-
-export PRODUCTIZE_KICAD=/kicad-library # (for Productize projects)
-/kicad-automation/eeschema/install-deps.sh
-/kicad-automation/eeschema/export_schematic.py /kicad-project/<some-schematic>.sch
+pip install -r eeschema/requirements.txt
 ```
 
-## Challenges / improvements:
+### Installation on Ubuntu/Debian:
 
-- Some files need other files to be viewed:
-	- EESchema library (.lib) files + documentation (.dcm) files
-	- EEschema schematic files require library cache files (-cache.lib)
-- Linking to schematic sheets
-- PCB layout layers
+```
+sudo apt-get install -y kicad python python-pip xvfb recordmydesktop xdotool xclip
+```
+
+## Usage
+
+In the Docker image or on a system with all required dependencies installed you
+can use the following commands:
+
+### Export a schematic to PDF or SVG
+
+```
+python -m kicad-automation.eeschema.schematic export /kicad-project/<some-schematic>.sch <build_dir> <svg or pdf> <all-pages (True or False)>
+```
+
+### Run ERC:
+
+```
+python -m kicad-automation.eeschema.schematic run-erc /kicad-project/<some-schematic>.sch <build_dir> <svg or pdf> <all-pages (True or False)>
+```
 
 [KiCad]: http://kicad-pcb.org/
+[xdotool]: https://github.com/jordansissel/xdotool
 [split-flap]: https://github.com/scottbez1/splitflap
 [scot's blog]: https://scottbezek.blogspot.be/2016/04/scripting-kicad-pcbnew-exports.html
-[docker-kicad]: https://github.com/productize/docker-kicad
+[Dockerhub]: https://hub.docker.com/r/productize/kicad-automation-scripts
