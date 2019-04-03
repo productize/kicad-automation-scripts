@@ -27,9 +27,8 @@ repo_root = os.path.dirname(electronics_root)
 sys.path.append(repo_root)
 
 from util import file_util
-from export_util import (
+from ui_automation import (
     PopenContext,
-    versioned_schematic,
     xdotool,
     wait_for_window,
     recorded_xvfb,
@@ -63,11 +62,10 @@ def export_bom():
 
     screencast_output_file = os.path.join(output_dir, 'export_bom_screencast.ogv')
 
-    with versioned_schematic(schematic_file):
-        with recorded_xvfb(screencast_output_file, width=800, height=600, colordepth=24):
-            with PopenContext(['eeschema', schematic_file], close_fds=True) as eeschema_proc:
-                eeschema_export_bom(output_dir)
-                eeschema_proc.terminate()
+    with recorded_xvfb(screencast_output_file, width=800, height=600, colordepth=24):
+        with PopenContext(['eeschema', schematic_file], close_fds=True) as eeschema_proc:
+            eeschema_export_bom(output_dir)
+            eeschema_proc.terminate()
 
     logger.info('Convert component XML to useful BOM CSV file...')
     subprocess.check_call([

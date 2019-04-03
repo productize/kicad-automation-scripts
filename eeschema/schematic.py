@@ -31,14 +31,13 @@ repo_root = os.path.dirname(eeschema_dir)
 sys.path.append(repo_root)
 
 from util import file_util
-from eeschema.export_util import (
+from util.ui_automation import (
     PopenContext,
     xdotool,
     wait_for_window,
     recorded_xvfb,
     clipboard_store,
-    clipboard_retrieve,
-    wait_for_file_created_by_process
+    clipboard_retrieve
 )
 
 logging.basicConfig(level=logging.DEBUG)
@@ -204,7 +203,7 @@ def eeschema_run_erc(schematic, output_dir, warning_as_error):
             xdotool(['key', 'Return'])
 
             logger.info('Wait for ERC file creation')
-            wait_for_file_created_by_process(eeschema_proc.pid, erc_file)
+            file_util.wait_for_file_created_by_process(eeschema_proc.pid, erc_file)
 
             eeschema_proc.terminate()
 
