@@ -76,7 +76,6 @@ def eeschema_plot_schematic(output_directory, file_format, all_pages):
     xdotool(['key', 'p'])
 
     wait_for_window('plot', 'Plot')
-    xdotool(['search', '--name', 'Plot', 'windowfocus'])
 
     logger.info('Enter build output directory')
     xdotool(['type', output_directory])
@@ -165,9 +164,8 @@ def eeschema_run_erc(schematic, output_dir, warning_as_error):
         with PopenContext(['eeschema', schematic], close_fds=True) as eeschema_proc:
             dismiss_library_warning()
 
-            wait_for_window('eeschema', '\[')
             logger.info('Focus main eeschema window')
-            xdotool(['search', '--name', '\[', 'windowfocus'])
+            wait_for_window('eeschema', '\[')
 
             logger.info('Open Tools->Electrical Rules Checker')
             xdotool(['key', 'alt+t'])
@@ -176,9 +174,8 @@ def eeschema_run_erc(schematic, output_dir, warning_as_error):
             # Do this now since we have to wait for KiCad anyway
             clipboard_store(os.path.abspath(output_dir)+'/')
 
-            wait_for_window('Electrical Rules Checker', 'Electrical Rules Checker')
             logger.info('Focus Electrical Rules Checker window')
-            xdotool(['search', '--name', 'Electrical Rules Checker', 'windowfocus'])
+            wait_for_window('Electrical Rules Checker', 'Electrical Rules Checker')
             xdotool(['key', 'Tab'])
             xdotool(['key', 'Tab'])
             xdotool(['key', 'Tab'])
@@ -187,7 +184,6 @@ def eeschema_run_erc(schematic, output_dir, warning_as_error):
             xdotool(['key', 'Return'])
 
             wait_for_window('ERC File save dialog', 'ERC File')
-            xdotool(['search', '--name', 'ERC File', 'windowfocus'])
             xdotool(['key', 'Home'])
             logger.info('Pasting output dir')
             xdotool(['key', 'ctrl+v'])

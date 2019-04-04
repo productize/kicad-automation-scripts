@@ -80,12 +80,16 @@ def clipboard_retrieve():
         output += line.decode()
     return output;
 
-def wait_for_window(name, window_regex, timeout=10):
+def wait_for_window(name, window_regex, timeout=10, focus=True):
     DELAY = 0.5
     logger.info('Waiting for %s window...', name)
+    xdotool_command = ['search', '--onlyvisible', '--name', window_regex]
+    if focus:
+        xdotool_command.append('windowfocus')
+
     for i in range(int(timeout/DELAY)):
         try:
-            window_id = xdotool(['search', '--onlyvisible', '--name', window_regex]).strip()
+            window_id = xdotool(xdotool_command).strip()
             logger.info('Found %s window', name)
             logger.debug('Window id: %s', window_id)
             return window_id

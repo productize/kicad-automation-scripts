@@ -87,18 +87,15 @@ def run_drc(pcb_file, output_dir, record=True):
         with PopenContext(['pcbnew', pcb_file], close_fds=True) as pcbnew_proc:
             clipboard_store(drc_output_file)
 
-            pcbnew_window = wait_for_window('pcbnew', 'Pcbnew')
             logger.info('Focus main pcbnew window')
-            xdotool(['windowfocus', pcbnew_window])
+            wait_for_window('pcbnew', 'Pcbnew')
 
             logger.info('Open Tools->DRC')
             xdotool(['key', 'alt+t'])
             xdotool(['key', 'd'])
 
-
-            wait_for_window('DRC modal window', 'DRC Control')
             logger.info('Focus DRC modal window')
-            xdotool(['search', '--name', 'DRC Control', 'windowfocus'])
+            wait_for_window('DRC modal window', 'DRC Control')
             xdotool(['key', 'Tab'])
             xdotool(['key', 'Tab'])
             xdotool(['key', 'Tab'])	
@@ -109,7 +106,6 @@ def run_drc(pcb_file, output_dir, record=True):
             xdotool(['key', 'Return'])
 
             wait_for_window('Report completed dialog', 'Disk File Report Completed')
-            xdotool(['search', '--onlyvisible', '--name', 'Disk File Report Completed', 'windowfocus'])
             xdotool(['key', 'Return'])
             pcbnew_proc.terminate()
 
