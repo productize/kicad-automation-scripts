@@ -80,7 +80,7 @@ def run_drc(pcb_file, output_dir, record=True):
     xvfb_kwargs = {
 	    'width': 800,
 	    'height': 600,
-	    'colordepth': 24
+	    'colordepth': 24,
     }
 
     with recorded_xvfb(recording_file, **xvfb_kwargs) if record else Xvfb(**xvfb_kwargs):
@@ -90,17 +90,22 @@ def run_drc(pcb_file, output_dir, record=True):
             logger.info('Focus main pcbnew window')
             wait_for_window('pcbnew', 'Pcbnew')
 
-            logger.info('Open Tools->DRC')
-            xdotool(['key', 'alt+t'])
+            logger.info('Open Inspect->DRC')
+            xdotool(['key', 'alt+i'])
             xdotool(['key', 'd'])
 
             logger.info('Focus DRC modal window')
             wait_for_window('DRC modal window', 'DRC Control')
             xdotool(['key', 'Tab'])
             xdotool(['key', 'Tab'])
-            xdotool(['key', 'Tab'])	
+            xdotool(['key', 'Tab'])
+            # Refill zones on DRC gets saved in /root/.config/kicad/pcbnew as RefillZonesBeforeDrc
+            xdotool(['key', 'Tab'])
+            logger.info('Enable reporting all errors for tracks')
             xdotool(['key', 'space'])
             xdotool(['key', 'Tab'])
+            xdotool(['key', 'Tab'])
+            xdotool(['key', 'space'])
             logger.info('Pasting output dir')
             xdotool(['key', 'ctrl+v'])
             xdotool(['key', 'Return'])

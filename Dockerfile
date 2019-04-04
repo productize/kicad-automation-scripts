@@ -1,4 +1,4 @@
-FROM productize/kicad:4.0.7-18.04
+FROM productize/kicad:5.0.1-18.04
 MAINTAINER Seppe Stas <seppe@productize.be>
 LABEL Description="Minimal KiCad image with automation scripts; based on Ubuntu"
 
