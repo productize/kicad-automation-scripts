@@ -1,0 +1,19 @@
+stages:
+  - test
+  - export
+
+test-erc:
+  image: productize/kicad-automation-scripts
+  tags:
+  - docker
+  script:
+    - python -m kicad-automation.eeschema.schematic run_erc kicad-automation/test-projects/kicad5/good-project-true/good-project.sch output
+  stage: test
+
+export-schematic-pdf:
+  image: productize/kicad-automation-scripts
+  tags:
+  - docker
+  script:
+    - python -m kicad-automation.eeschema.schematic export -a -f pdf kicad-automation/test-projects/kicad5/good-project-true/good-project.sch output
+  stage: export
