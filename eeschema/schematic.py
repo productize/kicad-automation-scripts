@@ -54,7 +54,19 @@ def dismiss_library_warning():
 
         logger.info('Dismiss eeschema library warning window')
         xdotool(['search', '--name', nf_title, 'windowfocus'])
-        xdotool(['key', 'KP_Enter'])
+        xdotool(['key', 'Return'])
+    except RuntimeError:
+        pass
+
+def dismiss_newer_version():
+    # The "Not Found" window pops up if libraries required by the schematic have
+    # not been found. This can be ignored as all symbols are placed inside the
+    # *-cache.lib file:
+    try:
+        logger.info('Dismiss schematic version notification')
+        wait_for_window('Newer schematic version notification', 'Info', 3)
+
+        xdotool(['key', 'Return'])
     except RuntimeError:
         pass
 
@@ -168,6 +180,7 @@ def eeschema_run_erc(schematic, output_dir, warning_as_error):
     with recorded_xvfb(screencast_output_file, width=800, height=600, colordepth=24):
         with PopenContext(['eeschema', schematic], close_fds=True) as eeschema_proc:
             dismiss_library_warning()
+            dismiss_newer_version()
 
             logger.info('Focus main eeschema window')
             wait_for_window('eeschema', '\[')
