@@ -239,6 +239,10 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
+    if not os.path.isfile(args.schematic):
+        logging.error(args.schematic+' does not exist')
+        exit(-1)
+
     output_dir = os.path.abspath(args.output_dir)+'/'
     file_util.mkdir_p(output_dir)
 
