@@ -7,7 +7,7 @@ test-erc:
   tags:
   - docker
   script:
-    - python -m kicad-automation.eeschema.schematic run_erc kicad-automation/test-projects/kicad5/good-project-true/good-project.sch output
+    - python -m kicad-automation.eeschema.schematic run_erc ./test-projects/kicad5/good-project-true/good-project.sch output
   stage: test
 
 export-schematic-pdf:
@@ -15,5 +15,5 @@ export-schematic-pdf:
   tags:
   - docker
   script:
-    - python -m kicad-automation.eeschema.schematic export -a -f pdf kicad-automation/test-projects/kicad5/good-project-true/good-project.sch output
+    - python -m kicad-automation.eeschema.schematic export -a -f pdf ./test-projects/kicad5/good-project-true/good-project.sch output
   stage: export
