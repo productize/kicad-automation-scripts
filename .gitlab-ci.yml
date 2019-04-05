@@ -3,7 +3,7 @@ stages:
   - export
 
 test-erc:
-  image: productize/kicad-automation-scripts
+  image: productize/kicad-automation-scripts:test
   tags:
   - docker
   script:
@@ -15,7 +15,7 @@ test-erc:
     expire_in: 1 day
 
 export-schematic-pdf:
-  image: productize/kicad-automation-scripts
+  image: productize/kicad-automation-scripts:test
   tags:
   - docker
   script:
