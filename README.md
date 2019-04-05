@@ -22,13 +22,13 @@ Build the docker image and run it:
 
 ```
 docker build -t kicad-automation .
-docker run --rm -it -v <path to a kicad project>/kicad-project kicad-automation-scripts
+docker run --rm -it -v <path to a kicad project>/kicad-project -v`pwd`:/kicad-automation-scriptskicad-automation-scripts
 ```
 
 Or fetch it from [Dockerhub]:
 
 ```
-docker run --rm -it -v <path to a kicad project>/kicad-project kicad-automation-scripts
+docker run --rm -it -v <path to a kicad project>/kicad-project productize/kicad-automation-scripts
 ```
 
 # Installation on your own machine:
@@ -72,7 +72,7 @@ python -m kicad-automation.eeschema.schematic export /kicad-project/<some-schema
 ### Run ERC:
 
 ```
-python -m kicad-automation.eeschema.schematic run-erc /kicad-project/<some-schematic>.sch <build_dir> <svg or pdf> <all-pages (True or False)>
+python -m kicad-automation.eeschema.schematic run_erc /kicad-project/<some-schematic>.sch <build_dir> <svg or pdf> <all-pages (True or False)>
 ```
 
 [KiCad]: http://kicad-pcb.org/
