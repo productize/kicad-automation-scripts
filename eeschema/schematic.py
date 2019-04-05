@@ -59,11 +59,12 @@ def dismiss_library_warning():
         pass
 
 def eeschema_plot_schematic(output_directory, file_format, all_pages):
-    file_format = file_format.upper()
-    if file_format not in ('PDF', 'SVG'):
-        raise ValueError("file_format should be 'PDF' or 'SVG'")
+    if file_format not in ('pdf', 'svg'):
+        raise ValueError("file_format should be 'pdf' or 'svg'")
 
-    dismiss_library_warning();
+    clipboard_store(output_dir)
+
+    dismiss_library_warning()
 
     wait_for_window('eeschema', '\[')
 
@@ -71,24 +72,25 @@ def eeschema_plot_schematic(output_directory, file_format, all_pages):
     xdotool(['search', '--name', '\[', 'windowfocus'])
 
     logger.info('Open File->Plot->Plot')
-    xdotool(['key', 'alt+f'])
-    xdotool(['key', 'p'])
-    xdotool(['key', 'p'])
+    xdotool(['key', 'alt+f',
+        'p',
+        'p'
+    ])
 
     wait_for_window('plot', 'Plot')
 
-    logger.info('Enter build output directory')
-    xdotool(['type', output_directory])
-    command_list = [
-            'key',
-            'Tab',
-            'Tab',
-            'Tab',
-            'Tab',
-            'Tab',
-            'space',
+    logger.info('Paste output directory')
+    xdotool(['key', 'ctrl+v'])
+
+    command_list = ['key',
+        'Tab',
+        'Tab',
+        'Tab',
+        'Tab',
+        'Tab',
+        'space'
     ]
-    if file_format == 'PDF':
+    if file_format == 'pdf':
         logger.info('Select PDF plot format')
         for i in range(3):
             command_list.insert(6, 'Up')
@@ -103,9 +105,6 @@ def eeschema_plot_schematic(output_directory, file_format, all_pages):
 
     logger.info('Plot')
     xdotool(['key', 'Return'])
-
-    logger.info('Wait before shutdown')
-    time.sleep(2)
 
 def set_default_plot_option():
     # eeschema saves the latest plot format, this is problematic because
@@ -127,16 +126,24 @@ def set_default_plot_option():
         os.remove(in_p)
         os.rename(out_p, in_p)
 
-def eeschema_export_schematic(schematic, output_dir, file_format="SVG", all_pages=False):
-    file_util.mkdir_p(output_dir)
-
+def eeschema_export_schematic(schematic, output_dir, file_format="svg", all_pages=False):
     screencast_output_file = os.path.join(output_dir, 'export_schematic_screencast.ogv')
+    file_format = file_format.lower()
+    output_file = os.path.join(output_dir, os.path.splitext(os.path.basename(schematic))[0]+'.'+file_format)
+    if os.path.exists(output_file):
+        logging.info('Removing old file')
+        os.remove(output_file)
+
+    set_default_plot_option()
+    os.path.basename('/root/dir/sub/file.ext')
 
     with recorded_xvfb(screencast_output_file, width=800, height=600, colordepth=24):
-        set_default_plot_option()
         with PopenContext(['eeschema', schematic], close_fds=True) as eeschema_proc:
             eeschema_plot_schematic(output_dir, file_format, all_pages)
+            file_util.wait_for_file_created_by_process(eeschema_proc.pid, output_file)
             eeschema_proc.terminate()
+
+    return output_file
 
 def eeschema_parse_erc(erc_file, warning_as_error = False):
     with open(erc_file, 'r') as f:
@@ -156,8 +163,6 @@ def eeschema_parse_erc(erc_file, warning_as_error = False):
 def eeschema_run_erc(schematic, output_dir, warning_as_error):
     os.environ['EDITOR'] = '/bin/cat'
 
-    file_util.mkdir_p(output_dir)
-
     screencast_output_file = os.path.join(output_dir, 'run_erc_schematic_screencast.ogv')
 
     with recorded_xvfb(screencast_output_file, width=800, height=600, colordepth=24):
@@ -168,28 +173,34 @@ def eeschema_run_erc(schematic, output_dir, warning_as_error):
             wait_for_window('eeschema', '\[')
 
             logger.info('Open Tools->Electrical Rules Checker')
-            xdotool(['key', 'alt+t'])
-            xdotool(['key', 'c'])
+            xdotool(['key',
+                'alt+t',
+                'c'
+            ])
 
             # Do this now since we have to wait for KiCad anyway
-            clipboard_store(os.path.abspath(output_dir)+'/')
+            clipboard_store(output_dir)
 
             logger.info('Focus Electrical Rules Checker window')
             wait_for_window('Electrical Rules Checker', 'Electrical Rules Checker')
-            xdotool(['key', 'Tab'])
-            xdotool(['key', 'Tab'])
-            xdotool(['key', 'Tab'])
-            xdotool(['key', 'Tab'])
-            xdotool(['key', 'space'])
-            xdotool(['key', 'Return'])
+            xdotool(['key',
+                'Tab',
+                'Tab',
+                'Tab',
+                'Tab',
+                'space',
+                'Return'
+            ])
 
             wait_for_window('ERC File save dialog', 'ERC File')
             xdotool(['key', 'Home'])
             logger.info('Pasting output dir')
             xdotool(['key', 'ctrl+v'])
             logger.info('Copy full file path')
-            xdotool(['key', 'ctrl+a'])
-            xdotool(['key', 'ctrl+c'])
+            xdotool(['key',
+                'ctrl+a',
+                'ctrl+c'
+            ])
 
             erc_file = clipboard_retrieve()
             if os.path.exists(erc_file):
@@ -228,11 +239,14 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
+    output_dir = os.path.abspath(args.output_dir)+'/'
+    file_util.mkdir_p(output_dir)
+
     if args.command == 'export':
-        eeschema_export_schematic(args.schematic, args.output_dir, args.file_format, args.all_pages)
+        eeschema_export_schematic(args.schematic, output_dir, args.file_format, args.all_pages)
         exit(0)
     if args.command == 'run_erc':
-        errors = eeschema_run_erc(args.schematic, args.output_dir, args.warnings_as_errors)
+        errors = eeschema_run_erc(args.schematic, output_dir, args.warnings_as_errors)
         if errors > 0:
             logging.error('{} ERC errors detected'.format(errors))
             exit(errors)
