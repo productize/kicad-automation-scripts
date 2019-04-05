@@ -77,6 +77,7 @@ def eeschema_plot_schematic(output_directory, file_format, all_pages):
     clipboard_store(output_dir)
 
     dismiss_library_warning()
+    dismiss_newer_version()
 
     wait_for_window('eeschema', '\[')
 
