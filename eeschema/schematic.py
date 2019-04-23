@@ -81,11 +81,8 @@ def eeschema_plot_schematic(output_directory, file_format, all_pages):
     logger.info('Focus main eeschema window')
     xdotool(['search', '--name', '\[', 'windowfocus'])
 
-    logger.info('Open File->Plot->Plot')
-    xdotool(['key', 'alt+f',
-        'p',
-        'p'
-    ])
+    logger.info('Open File->Plot')
+    xdotool(['key', 'alt+f', 'l'])
 
     wait_for_window('plot', 'Plot')
 
@@ -95,22 +92,19 @@ def eeschema_plot_schematic(output_directory, file_format, all_pages):
     command_list = ['key',
         'Tab',
         'Tab',
-        'Tab',
-        'Tab',
-        'Tab',
         'space'
     ]
     if file_format == 'pdf':
         logger.info('Select PDF plot format')
         for i in range(3):
-            command_list.insert(6, 'Up')
+            command_list.insert(3, 'Up')
     else:
         logger.info('Select SVG plot format')
         for i in range(2):
-            command_list.insert(6, 'Up')
+            command_list.insert(3, 'Up')
 
     if not all_pages:   # all pages is default option
-        command_list.extend(['Tab', 'Tab', 'Tab', 'Tab'])
+        command_list.extend(['Tab', 'Tab', 'Tab', 'Tab', 'Tab'])
     xdotool(command_list)
 
     logger.info('Plot')
