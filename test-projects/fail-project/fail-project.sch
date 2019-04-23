@@ -1,35 +1,6 @@
-EESchema Schematic File Version 2
-LIBS:power
-LIBS:device
-LIBS:transistors
-LIBS:conn
-LIBS:linear
-LIBS:regul
-LIBS:74xx
-LIBS:cmos4000
-LIBS:adc-dac
-LIBS:memory
-LIBS:xilinx
-LIBS:microcontrollers
-LIBS:dsp
-LIBS:microchip
-LIBS:analog_switches
-LIBS:motorola
-LIBS:texas
-LIBS:intel
-LIBS:audio
-LIBS:interface
-LIBS:digital-audio
-LIBS:philips
-LIBS:display
-LIBS:cypress
-LIBS:siliconi
-LIBS:opto
-LIBS:atmel
-LIBS:contrib
-LIBS:valves
+EESchema Schematic File Version 4
 LIBS:fail-project-cache
-EELAYER 25 0
+EELAYER 26 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
@@ -44,7 +15,7 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L R R1
+L Device:R R1
 U 1 1 5CA32696
 P 3100 3425
 F 0 "R1" V 3180 3425 50  0000 C CNN
@@ -55,7 +26,7 @@ F 3 "" H 3100 3425 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED D1
+L Device:LED D1
 U 1 1 5CA326B7
 P 3100 3075
 F 0 "D1" H 3100 3175 50  0000 C CNN
@@ -66,7 +37,7 @@ F 3 "" H 3100 3075 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L VCC #PWR01
+L power:VCC #PWR01
 U 1 1 5CA32709
 P 3100 2875
 F 0 "#PWR01" H 3100 2725 50  0001 C CNN
@@ -77,7 +48,7 @@ F 3 "" H 3100 2875 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Conn_01x02 J1
+L Connector_Generic:Conn_01x02 J1
 U 1 1 5CA32731
 P 2000 3125
 F 0 "J1" H 2000 3225 50  0000 C CNN
@@ -88,7 +59,7 @@ F 3 "" H 2000 3125 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L VCC #PWR02
+L power:VCC #PWR02
 U 1 1 5CA327B9
 P 2625 2875
 F 0 "#PWR02" H 2625 2725 50  0001 C CNN
@@ -99,7 +70,7 @@ F 3 "" H 2625 2875 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR03
+L power:GND #PWR03
 U 1 1 5CA32803
 P 2625 3250
 F 0 "#PWR03" H 2625 3000 50  0001 C CNN
@@ -110,7 +81,7 @@ F 3 "" H 2625 3250 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L PWR_FLAG #FLG04
+L power:PWR_FLAG #FLG04
 U 1 1 5CA341D3
 P 2300 3250
 F 0 "#FLG04" H 2300 3325 50  0001 C CNN
@@ -121,7 +92,7 @@ F 3 "" H 2300 3250 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L GND #PWR05
+L power:GND #PWR05
 U 1 1 5CA38687
 P 3100 3650
 F 0 "#PWR05" H 3100 3400 50  0001 C CNN
@@ -132,11 +103,11 @@ F 3 "" H 3100 3650 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	2200 3025 2625 3025
+	2200 3025 2300 3025
 Wire Wire Line
 	3100 2875 3100 2925
 Wire Wire Line
-	2200 3125 2625 3125
+	2200 3125 2300 3125
 Wire Wire Line
 	2625 3025 2625 2875
 Connection ~ 2300 3025
@@ -150,33 +121,37 @@ Wire Wire Line
 Wire Wire Line
 	3100 3225 3100 3275
 $Comp
-L 7400 U1
+L 74xx:7400 U1
 U 1 1 5CA4902D
-P 2825 1850
-F 0 "U1" H 2825 1900 50  0000 C CNN
-F 1 "7400" H 2825 1750 50  0000 C CNN
-F 2 "" H 2825 1850 50  0001 C CNN
-F 3 "" H 2825 1850 50  0001 C CNN
-	1    2825 1850
+P 2725 1175
+F 0 "U1" H 2725 1225 50  0000 C CNN
+F 1 "7400" H 2725 1075 50  0000 C CNN
+F 2 "" H 2725 1175 50  0001 C CNN
+F 3 "" H 2725 1175 50  0001 C CNN
+	1    2725 1175
 	1    0    0    -1  
 $EndComp
 $Comp
-L 7400 U1
-U 2 1 5CA4912B
-P 2825 2350
-F 0 "U1" H 2825 2400 50  0000 C CNN
-F 1 "7400" H 2825 2250 50  0000 C CNN
-F 2 "" H 2825 2350 50  0001 C CNN
-F 3 "" H 2825 2350 50  0001 C CNN
-	2    2825 2350
+L 74xx:7400 U1
+U 1 1 5CA4912B
+P 2725 1950
+F 0 "U1" H 2725 2000 50  0000 C CNN
+F 1 "7400" H 2725 1850 50  0000 C CNN
+F 2 "" H 2725 1950 50  0001 C CNN
+F 3 "" H 2725 1950 50  0001 C CNN
+	1    2725 1950
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	3425 1850 3525 1850
-Wire Wire Line
-	3525 1850 3525 2350
-Wire Wire Line
-	3525 2350 3425 2350
-Text Notes 3575 1925 0    60   ~ 0
+Text Notes 3425 1575 0    60   ~ 0
 Generate error by connecting output to output
+Wire Wire Line
+	2300 3025 2625 3025
+Wire Wire Line
+	2300 3125 2625 3125
+Wire Wire Line
+	3025 1950 3325 1950
+Wire Wire Line
+	3325 1950 3325 1175
+Wire Wire Line
+	3325 1175 3025 1175
 $EndSCHEMATC
