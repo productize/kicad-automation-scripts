@@ -90,6 +90,9 @@ def run_drc(pcb_file, output_dir, record=True):
             logger.info('Focus main pcbnew window')
             wait_for_window('pcbnew', 'Pcbnew')
 
+            # Needed to rebuild the menu, making sure it is actually built
+            xdotool(['mousemove', '0', '0'])
+
             logger.info('Open Inspect->DRC')
             xdotool(['key', 'alt+i'])
             xdotool(['key', 'd'])
@@ -105,7 +108,9 @@ def run_drc(pcb_file, output_dir, record=True):
             xdotool(['key', 'space'])
             xdotool(['key', 'Tab'])
             xdotool(['key', 'Tab'])
+            xdotool(['key', 'Tab'])
             xdotool(['key', 'space'])
+            xdotool(['key', 'Tab'])
             logger.info('Pasting output dir')
             xdotool(['key', 'ctrl+v'])
             xdotool(['key', 'Return'])
