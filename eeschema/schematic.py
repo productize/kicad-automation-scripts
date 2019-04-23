@@ -49,7 +49,7 @@ def dismiss_library_warning():
     # not been found. This can be ignored as all symbols are placed inside the
     # *-cache.lib file:
     try:
-        nf_title = 'Not Found'
+        nf_title = 'Project Rescue Helper'
         wait_for_window(nf_title, nf_title, 3)
 
         logger.info('Dismiss eeschema library warning window')
@@ -59,9 +59,6 @@ def dismiss_library_warning():
         pass
 
 def dismiss_newer_version():
-    # The "Not Found" window pops up if libraries required by the schematic have
-    # not been found. This can be ignored as all symbols are placed inside the
-    # *-cache.lib file:
     try:
         logger.info('Dismiss schematic version notification')
         wait_for_window('Newer schematic version notification', 'Info', 3)
@@ -77,7 +74,7 @@ def eeschema_plot_schematic(output_directory, file_format, all_pages):
     clipboard_store(output_dir)
 
     dismiss_library_warning()
-    dismiss_newer_version()
+    # dismiss_newer_version()
 
     wait_for_window('eeschema', '\[')
 
@@ -162,7 +159,7 @@ def eeschema_parse_erc(erc_file, warning_as_error = False):
     with open(erc_file, 'r') as f:
         lines = f.read().splitlines()
         last_line = lines[-1]
-    
+
     logging.debug('Last line: '+last_line)
     m = re.search('^ \*\* ERC messages: ([0-9]+) +Errors ([0-9]+) +Warnings ([0-9]+)+$', last_line)
     messages = m.group(1)
@@ -181,14 +178,14 @@ def eeschema_run_erc(schematic, output_dir, warning_as_error):
     with recorded_xvfb(screencast_output_file, width=800, height=600, colordepth=24):
         with PopenContext(['eeschema', schematic], close_fds=True) as eeschema_proc:
             dismiss_library_warning()
-            dismiss_newer_version()
+            # dismiss_newer_version()
 
             logger.info('Focus main eeschema window')
             wait_for_window('eeschema', '\[')
 
-            logger.info('Open Tools->Electrical Rules Checker')
+            logger.info('Inspect->Electrical Rules Checker')
             xdotool(['key',
-                'alt+t',
+                'alt+i',
                 'c'
             ])
 
