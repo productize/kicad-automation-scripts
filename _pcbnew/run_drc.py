@@ -98,25 +98,26 @@ def run_drc(pcb_file, output_dir, record=True):
             wait_for_window('pcbnew', 'Pcbnew')
 
             logger.info('Open Inspect->DRC')
-            xdotool(['key', 'alt+i'])
-            xdotool(['key', 'd'])
+            xdotool(['key', 'alt+i', 'd'])
 
             logger.info('Focus DRC modal window')
             wait_for_window('DRC modal window', 'DRC Control')
-            xdotool(['key', 'Tab'])
-            xdotool(['key', 'Tab'])
-            xdotool(['key', 'Tab'])
-            # Refill zones on DRC gets saved in /root/.config/kicad/pcbnew as RefillZonesBeforeDrc
-            xdotool(['key', 'Tab'])
-            logger.info('Enable reporting all errors for tracks')
-            xdotool(['key', 'space'])
-            xdotool(['key', 'Tab'])
-            xdotool(['key', 'Tab'])
-            xdotool(['key', 'Tab'])
-            xdotool(['key', 'space'])
-            xdotool(['key', 'Tab'])
+            xdotool(['key',
+                'Tab',
+                'Tab',
+                'Tab', # Refill zones on DRC gets saved in /root/.config/kicad/pcbnew as RefillZonesBeforeDrc
+                'key',
+                'Tab',
+                'space', # Enable reporting all errors for tracks
+                'Tab',
+                'Tab',
+                'Tab',
+                'space',
+                'Tab'
+            ])
             logger.info('Pasting output dir')
             xdotool(['key', 'ctrl+v'])
+
             xdotool(['key', 'Return'])
 
             wait_for_window('Report completed dialog', 'Disk File Report Completed')
