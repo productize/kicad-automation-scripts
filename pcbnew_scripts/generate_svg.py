@@ -20,7 +20,12 @@ import shutil
 import subprocess
 import sys
 
+pcbnew_dir = os.path.dirname(os.path.abspath(__file__))
+repo_root = os.path.dirname(pcbnew_dir)
+sys.path.append(repo_root)
+
 import pcb_util
+from util import file_util
 
 from svg_processor import SvgProcessor
 
@@ -35,6 +40,7 @@ def color_with_alpha(base_color, alpha):
 
 def run(pcb_file):
     temp_dir = os.path.join(BUILD_DIRECTORY, 'temp_layers')
+    file_util.mkdir_p(BUILD_DIRECTORY)
     plot_to_directory(pcb_file, BUILD_DIRECTORY, temp_dir)
 
 def plot_to_directory(pcb_file, output_directory, temp_dir):
