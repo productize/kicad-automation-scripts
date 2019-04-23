@@ -21,3 +21,7 @@ export-schematic-pdf:
   script:
     - ./eeschema/schematic.py export -a -f pdf ./test-projects/good-project/good-project.sch output
   stage: export
+  artifacts:
+    paths:
+      - output
+    expire_in: 1 day
