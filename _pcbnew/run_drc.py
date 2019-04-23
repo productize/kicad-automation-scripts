@@ -87,11 +87,15 @@ def run_drc(pcb_file, output_dir, record=True):
         with PopenContext(['pcbnew', pcb_file], close_fds=True) as pcbnew_proc:
             clipboard_store(drc_output_file)
 
+            window = wait_for_window('pcbnew', 'Pcbnew', 10, False)
+
             logger.info('Focus main pcbnew window')
             wait_for_window('pcbnew', 'Pcbnew')
 
             # Needed to rebuild the menu, making sure it is actually built
-            xdotool(['mousemove', '0', '0'])
+            xdotool(['windowsize', '--sync', window, '750', '600'])
+
+            wait_for_window('pcbnew', 'Pcbnew')
 
             logger.info('Open Inspect->DRC')
             xdotool(['key', 'alt+i'])
