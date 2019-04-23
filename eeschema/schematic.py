@@ -250,7 +250,8 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    if not os.path.isfile(args.schematic):
+    schematic = os.path.abspath(args.schematic)
+    if not os.path.isfile(schematic):
         logging.error(args.schematic+' does not exist')
         exit(-1)
 
@@ -258,10 +259,10 @@ if __name__ == '__main__':
     file_util.mkdir_p(output_dir)
 
     if args.command == 'export':
-        eeschema_export_schematic(args.schematic, output_dir, args.file_format, args.all_pages)
+        eeschema_export_schematic(schematic, output_dir, args.file_format, args.all_pages)
         exit(0)
     if args.command == 'run_erc':
-        errors = eeschema_run_erc(args.schematic, output_dir, args.warnings_as_errors)
+        errors = eeschema_run_erc(schematic, output_dir, args.warnings_as_errors)
         if errors > 0:
             logging.error('{} ERC errors detected'.format(errors))
             exit(errors)
