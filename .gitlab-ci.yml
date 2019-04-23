@@ -31,5 +31,17 @@ test-drc:
   tags:
   - docker
   script:
-    - ./_pcbnew/run_drc.py ./test-projects/good-project/good-project.kicad_pcb output
+    - ./pcbnew_scripts/run_drc.py ./test-projects/good-project/good-project.kicad_pcb output
   stage: test
+
+export-layout-svg:
+  image: productize/kicad-automation-scripts
+  tags:
+  - docker
+  script:
+    - ./pcbnew_scripts/generate_svg.py ./test-projects/good-project/good-project.kicad_pcb
+  stage: export
+  artifacts:
+    paths:
+      - build
+    expire_in: 1 day
