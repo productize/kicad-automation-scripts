@@ -25,3 +25,11 @@ export-schematic-pdf:
     paths:
       - output
     expire_in: 1 day
+
+test-drc:
+  image: productize/kicad-automation-scripts
+  tags:
+  - docker
+  script:
+    - ./_pcbnew/run_drc.py ./test-projects/good-project/good-project.kicad_pcb output
+  stage: test
