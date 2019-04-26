@@ -52,8 +52,8 @@ create-release:
     tags:
       - docker
     image: appropriate/curl
-      variables:
-        CI_DEBUG_TRACE: "true"
+    variables:
+      CI_DEBUG_TRACE: "true"
     script:
       - |
         curl -X POST --header 'Content-Type: application/json' --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" --data '{"name": "test-release", "tag_name": "testing", "ref": "$CI_COMMIT_SHA", "description": "Testing releases", "assets": {"links": [{"name": "build", "url": "build"}]}}' $CI_API_V4_API_URL/projects/$CI_PROJECT_ID/releases
