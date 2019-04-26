@@ -3,10 +3,6 @@ stages:
   - export
   - release
 
-variables:
-  RELEASE_NAME: ""
-  RELEASE_DESCRIPTION: ""
-
 test-erc:
   image: productize/kicad-automation-scripts
   tags:
@@ -50,7 +46,6 @@ export-layout-svg:
     paths:
       - build
     expire_in: 1 day
-    
 
 create-release:
     stage: release
@@ -58,6 +53,23 @@ create-release:
       - docker
     image: appropriate/curl
     script:
-      - echo $RELEASE_NAME $RELEASE_DESCRIPTION
+      - |
+        curl -X POST
+        --header 'Content-Type: application/json'
+        --header "PRIVATE-TOKEN: $CI_JOB_TOKEN"
+        --data '{
+            "name": "test-release",
+            "tag_name": "testing",
+            "ref": "$CI_COMMIT_SHA",
+            "description": "Testing releases",
+            "assets": {
+                "links": [
+                    {
+                        "name": "build", "url": "build"
+                    }
+                ]
+            }
+        }'
+        $CI_API_V4_API_URL/projects/$CI_PROJECT_ID/releases
     when: manual
     
