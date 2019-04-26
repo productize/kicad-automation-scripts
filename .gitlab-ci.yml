@@ -3,6 +3,10 @@ stages:
   - export
   - release
 
+variables:
+  RELEASE_NAME: ""
+  RELEASE_DESCRIPTION: ""
+
 test-erc:
   image: productize/kicad-automation-scripts
   tags:
@@ -49,12 +53,10 @@ export-layout-svg:
     
 
 create-release:
+    stage: release
     tags:
       - docker
     image: appropriate/curl
-    variables:
-        RELEASE_NAME: ""
-        RELEASE_DESCRIPTION: ""
     script:
       - echo $RELEASE_NAME $RELEASE_DESCRIPTION
     when: manual
