@@ -1,11 +1,12 @@
 stages:
   - test
   - export
+  - release
 
 test-erc:
   image: productize/kicad-automation-scripts
   tags:
-  - docker
+    - docker
   script:
     - ./eeschema/schematic.py run_erc ./test-projects/good-project/good-project.sch output
   stage: test
@@ -17,7 +18,7 @@ test-erc:
 export-schematic-pdf:
   image: productize/kicad-automation-scripts
   tags:
-  - docker
+    - docker
   script:
     - ./eeschema/schematic.py export -a -f pdf ./test-projects/good-project/good-project.sch output
   stage: export
@@ -29,7 +30,7 @@ export-schematic-pdf:
 test-drc:
   image: productize/kicad-automation-scripts
   tags:
-  - docker
+    - docker
   script:
     - ./pcbnew_scripts/run_drc.py ./test-projects/good-project/good-project.kicad_pcb output
   stage: test
@@ -37,7 +38,7 @@ test-drc:
 export-layout-svg:
   image: productize/kicad-automation-scripts
   tags:
-  - docker
+    - docker
   script:
     - ./pcbnew_scripts/generate_svg.py ./test-projects/good-project/good-project.kicad_pcb
   stage: export
@@ -45,3 +46,16 @@ export-layout-svg:
     paths:
       - build
     expire_in: 1 day
+    
+
+create-release:
+    tags:
+      - docker
+    image: appropriate/curl
+    variables:
+        RELEASE_NAME: ""
+        RELEASE_DESCRIPTION: ""
+    script:
+      - echo $RELEASE_NAME $RELEASE_DESCRIPTION
+    when: manual
+    
