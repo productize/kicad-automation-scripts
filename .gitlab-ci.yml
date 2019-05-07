@@ -16,7 +16,7 @@ build-docker-base-image:
       - Dockerfile-base
       - config/*
   before_script:
-    - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USER --password-stdin
   script:
     - docker build -f Dockerfile-base -t productize/kicad-automation-base:$DOCKER_TAG .
     - docker push productize/kicad-automation-base
