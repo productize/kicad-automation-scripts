@@ -45,7 +45,7 @@ export-schematic-pdf:
 test-drc:
   image: productize/kicad-automation-base
   tags:
-  - docker
+    - docker
   script:
     - ./pcbnew_scripts/run_drc.py ./test-projects/good-project/good-project.kicad_pcb output
   stage: test
@@ -53,7 +53,7 @@ test-drc:
 export-layout-svg:
   image: productize/kicad-automation-base
   tags:
-  - docker
+    - docker
   script:
     - ./pcbnew_scripts/generate_svg.py ./test-projects/good-project/good-project.kicad_pcb
   stage: export
