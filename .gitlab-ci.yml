@@ -1,11 +1,27 @@
 stages:
+  - docker-base-image
   - test
   - export
+  - docker-image
+
+build-docker-base-image:
+  stage: docker-base-image
+  tags:
+    - runnersv2-shell
+  only:
+    changes:
+      - Dockerfile-base
+      - config/*
+  before_script:
+    - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+  script:
+    - docker build -f Dockerfile-base -t productize/kicad-automation-base .
+    - docker push productize/kicad-automation-base
 
 test-erc:
-  image: productize/kicad-automation-scripts
+  image: productize/kicad-automation-base
   tags:
-  - docker
+    - docker
   script:
     - ./eeschema/schematic.py run_erc ./test-projects/good-project/good-project.sch output
   stage: test
@@ -15,9 +31,9 @@ test-erc:
     expire_in: 1 day
 
 export-schematic-pdf:
-  image: productize/kicad-automation-scripts
+  image: productize/kicad-automation-base
   tags:
-  - docker
+    - docker
   script:
     - ./eeschema/schematic.py export -a -f pdf ./test-projects/good-project/good-project.sch output
   stage: export
@@ -27,7 +43,7 @@ export-schematic-pdf:
     expire_in: 1 day
 
 test-drc:
-  image: productize/kicad-automation-scripts
+  image: productize/kicad-automation-base
   tags:
   - docker
   script:
@@ -35,7 +51,7 @@ test-drc:
   stage: test
 
 export-layout-svg:
-  image: productize/kicad-automation-scripts
+  image: productize/kicad-automation-base
   tags:
   - docker
   script:
@@ -45,3 +61,13 @@ export-layout-svg:
     paths:
       - build
     expire_in: 1 day
+
+build-docker-image:
+  stage: docker-image
+  tags:
+    - runnersv2-shell
+  before_script:
+    - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+  script:
+    - docker build -t productize/kicad-automation-scripts .
+    - docker push productize/kicad-automation-scripts
