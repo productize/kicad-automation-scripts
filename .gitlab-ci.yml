@@ -4,6 +4,9 @@ stages:
   - export
   - docker-image
 
+variables:
+  DOCKER_TAG: latest
+
 build-docker-base-image:
   stage: docker-base-image
   tags:
@@ -15,7 +18,7 @@ build-docker-base-image:
   before_script:
     - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
   script:
-    - docker build -f Dockerfile-base -t productize/kicad-automation-base .
+    - docker build -f Dockerfile-base -t productize/kicad-automation-base:$DOCKER_TAG .
     - docker push productize/kicad-automation-base
 
 test-erc:
@@ -67,7 +70,7 @@ build-docker-image:
   tags:
     - runnersv2-shell
   before_script:
-    - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USER --password-stdin
   script:
-    - docker build -t productize/kicad-automation-scripts .
+    - docker build -t productize/kicad-automation-scripts --build-arg base_tag=$DOCKER_TAG .
     - docker push productize/kicad-automation-scripts
