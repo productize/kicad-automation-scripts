@@ -15,6 +15,7 @@ build-docker-base-image:
     changes:
       - Dockerfile-base
       - config/*
+      - src/requirements.txt
   before_script:
     - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USER --password-stdin
   script:
@@ -26,7 +27,7 @@ test-erc:
   tags:
     - docker
   script:
-    - ./eeschema/schematic.py run_erc ./test-projects/good-project/good-project.sch output
+    - ./src/eeschema/schematic.py run_erc ./test-projects/good-project/good-project.sch output
   stage: test
   artifacts:
     paths:
@@ -38,7 +39,7 @@ export-schematic-pdf:
   tags:
     - docker
   script:
-    - ./eeschema/schematic.py export -a -f pdf ./test-projects/good-project/good-project.sch output
+    - ./src/eeschema/schematic.py export -a -f pdf ./test-projects/good-project/good-project.sch output
   stage: export
   artifacts:
     paths:
@@ -50,19 +51,32 @@ test-drc:
   tags:
     - docker
   script:
-    - ./pcbnew_scripts/run_drc.py ./test-projects/good-project/good-project.kicad_pcb output
+    - ./src/pcbnew_automation/run_drc.py ./test-projects/good-project/good-project.kicad_pcb output
   stage: test
 
-export-layout-svg:
+export-layout-gerbers:
   image: productize/kicad-automation-base
   tags:
     - docker
   script:
-    - ./pcbnew_scripts/generate_svg.py ./test-projects/good-project/good-project.kicad_pcb
+    - ./src/pcbnew_automation/plot.py ./test-projects/good-project/good-project.kicad_pcb plot
   stage: export
   artifacts:
     paths:
-      - build
+      - plot
+    expire_in: 1 day
+
+export-layout-pdf:
+  image: productize/kicad-automation-base
+  tags:
+    - docker
+  script:
+    - ./src/pcbnew_automation/plot.py -f pdf ./test-projects/good-project/good-project.kicad_pcb plot
+    - ./src/pcbnew_automation/plot.py -f pdf ./test-projects/good-project/good-project.kicad_pcb plot Dwgs.User
+  stage: export
+  artifacts:
+    paths:
+      - plot
     expire_in: 1 day
 
 build-docker-image:

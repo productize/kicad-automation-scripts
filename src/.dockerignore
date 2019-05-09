@@ -1,0 +1,12 @@
+# Python stuff
+env/
+*.pyc
+__pycache__/
+requirements.txt
+
+# Git stuff
+.git
+.gitignore
+
+# MacOS stuff
+.DS_Store

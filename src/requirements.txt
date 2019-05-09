@@ -1,3 +1,4 @@
 xvfbwrapper==0.2.9
 argparse==1.2.1
 psutil==5.6.1
+PyPDF2==1.26.0

@@ -24,6 +24,7 @@ import re
 import argparse
 
 from contextlib import contextmanager
+from junit_xml import TestSuite, TestCase
 
 eeschema_dir = os.path.dirname(os.path.abspath(__file__))
 repo_root = os.path.dirname(eeschema_dir)

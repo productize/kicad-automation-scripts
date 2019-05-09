@@ -129,7 +129,7 @@ def run_drc(pcb_file, output_dir, record=True):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='KiCad automated DRC runner')
 
-    parser.add_argument('kicad_pcb_file', help='KiCad schematic file')
+    parser.add_argument('kicad_pcb_file', help='KiCad layout file')
     parser.add_argument('output_dir', help='Output directory')
     parser.add_argument('--ignore_unconnected', '-i', help='Ignore unconnected paths',
         action='store_true'

@@ -3,4 +3,4 @@ FROM productize/kicad-automation-base:$base_tag
 MAINTAINER Seppe Stas <seppe@productize.be>
 LABEL Description="Minimal KiCad image with automation scripts; based on Ubuntu"
 
-COPY . /usr/lib/python2.7/dist-packages/kicad-automation
+COPY src /usr/lib/python2.7/dist-packages/kicad-automation
