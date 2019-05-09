@@ -56,7 +56,8 @@ def plot_to_directory(pcb, file_format, layers, plot_directory, temp_dir):
             output_files.append(output_filename)
 
         drill_file = pcb.plot_drill()
-        output_files.append(drill_file)
+        if os.path.isfile(drill_file): # No drill file is generated if no holes exist
+            output_files.append(drill_file)
 
         zip_file_name = os.path.join(plot_directory, '{}_gerbers.zip'.format(pcb.name))
         with zipfile.ZipFile(zip_file_name, 'w') as z:
@@ -74,7 +75,7 @@ def plot_to_directory(pcb, file_format, layers, plot_directory, temp_dir):
             merger.append(PdfFileReader(file(output_filename, 'rb')), bookmark=layer.get_name())
 
         drill_map_file = pcb.plot_drill_map()
-        if os.path.isfile(drill_map_file): # No drill file is generated if no holes exist
+        if os.path.isfile(drill_map_file): # No drill map file is generated if no holes exist
             merger.append(PdfFileReader(file(drill_map_file, 'rb')), bookmark='Drill map')
 
         merger.write(plot_directory+'/{}.pdf'.format(pcb.name))
