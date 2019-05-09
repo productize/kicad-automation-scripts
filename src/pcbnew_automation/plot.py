@@ -37,9 +37,7 @@ def plot(pcb, file_format, layers, plot_directory):
         os.makedirs(temp_dir)
         plot_to_directory(pcb, file_format, layers, plot_directory, temp_dir)
     finally:
-        # shutil.rmtree(temp_dir, ignore_errors=True)
-        pass
-
+        shutil.rmtree(temp_dir, ignore_errors=True)
 
 def plot_to_directory(pcb, file_format, layers, plot_directory, temp_dir):
     output_files = []
