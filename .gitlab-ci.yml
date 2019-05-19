@@ -37,7 +37,7 @@ test-erc:
 test-erc-warning:
   image: productize/kicad-automation-base
   tags:
-    - docker
+    - runnersv2-docker
   script:
     - ./src/eeschema/schematic.py run_erc -x ./test-projects/warning-project/warning-project.sch output
   stage: test
