@@ -24,6 +24,7 @@ import re
 import argparse
 
 from contextlib import contextmanager
+from junit_xml import TestSuite, TestCase
 
 eeschema_dir = os.path.dirname(os.path.abspath(__file__))
 repo_root = os.path.dirname(eeschema_dir)
@@ -149,10 +150,53 @@ def eeschema_export_schematic(schematic, output_dir, file_format="svg", all_page
 
     return output_file
 
-def eeschema_parse_erc(erc_file, warning_as_error = False):
+def eeschema_parse_erc(erc_file, warning_as_error=False, generate_junit_xml=False):
     with open(erc_file, 'r') as f:
         lines = f.read().splitlines()
         last_line = lines[-1]
+
+    if generate_junit_xml:
+        # Build test suite per sheet. Multiple test failures per test case are
+        # not supported bu junit XML.
+        test_suites = []
+        test_cases = []
+
+        sheet = None
+
+        for i in range(0, len(lines)):
+            line = lines[i]
+            logger.debug(line)
+            if line.startswith('***** Sheet'):
+                if sheet:
+                    # Build test suite for previous sheet
+                    test_suites.append(TestSuite('ERC {}'.format(sheet), test_cases))
+
+                m = re.search('^\*\*\*\*\* Sheet (.+)$', line)
+                sheet = m.group(1)
+                test_cases = []
+
+            else:
+                if line.startswith('ErrType'):
+                    m = re.search('^ErrType\(([0-9]+)\): (.+)$', line)
+                    error_type = m.group(1)
+                    message = m.group(2)
+                else:
+                    continue
+                i += 1;
+                line = lines[i]
+
+                if not line.startswith('    @'):
+                    logger.error('Did not find location on line {}: {}'.format(i, line))
+                    continue
+
+                test_case = TestCase('ERC rule {}'.format(error_type), sheet)
+                test_case.add_failure_info(message + ' '+line.strip(), failure_type=error_type)
+                test_cases.append(test_case)
+
+        output_dir = os.path.dirname(erc_file)
+        with open(output_dir+'/junit.xml', 'w') as f:
+            TestSuite.to_file(f, test_suites, prettyprint=False)
+
 
     logging.debug('Last line: '+last_line)
     m = re.search('^ \*\* ERC messages: ([0-9]+) +Errors ([0-9]+) +Warnings ([0-9]+)+$', last_line)
@@ -164,7 +208,7 @@ def eeschema_parse_erc(erc_file, warning_as_error = False):
         return int(errors) + int(warnings)
     return int(errors)
 
-def eeschema_run_erc(schematic, output_dir, warning_as_error):
+def eeschema_run_erc(schematic, output_dir, warning_as_error, generate_junit_xml=False):
     os.environ['EDITOR'] = '/bin/cat'
 
     screencast_output_file = os.path.join(output_dir, 'run_erc_schematic_screencast.ogv')
@@ -219,7 +263,7 @@ def eeschema_run_erc(schematic, output_dir, warning_as_error):
 
             eeschema_proc.terminate()
 
-    return eeschema_parse_erc(erc_file, warning_as_error)
+    return eeschema_parse_erc(erc_file, warning_as_error, generate_junit_xml)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='KiCad schematic automation')
@@ -241,6 +285,9 @@ if __name__ == '__main__':
     erc_parser.add_argument('--warnings_as_errors', '-w', help='Treat warnings as errors',
         action='store_true'
     )
+    erc_parser.add_argument('--junit_xml', '-x', help='Generate junit XML report',
+        action='store_true'
+    )
 
     args = parser.parse_args()
 
@@ -256,7 +303,7 @@ if __name__ == '__main__':
         eeschema_export_schematic(schematic, output_dir, args.file_format, args.all_pages)
         exit(0)
     if args.command == 'run_erc':
-        errors = eeschema_run_erc(schematic, output_dir, args.warnings_as_errors)
+        errors = eeschema_run_erc(schematic, output_dir, args.warnings_as_errors, args.junit_xml)
         if errors > 0:
             logging.error('{} ERC errors detected'.format(errors))
             exit(errors)

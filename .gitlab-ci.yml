@@ -34,6 +34,18 @@ test-erc:
       - output
     expire_in: 1 day
 
+test-erc-warning:
+  image: productize/kicad-automation-base
+  tags:
+    - docker
+  script:
+    - ./src/eeschema/schematic.py run_erc -x ./test-projects/warning-project/warning-project.sch output
+  stage: test
+  artifacts:
+    reports:
+      junit: output/junit.xml
+    expire_in: 1 day
+
 export-schematic-pdf:
   image: productize/kicad-automation-base
   tags:
