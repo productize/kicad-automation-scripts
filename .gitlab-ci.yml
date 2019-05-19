@@ -39,7 +39,7 @@ test-erc-warning:
   tags:
     - runner-v11.2
   script:
-    - ./src/eeschema/schematic.py run_erc -x ./test-projects/warning-project/warning-project.sch output
+    - ./src/eeschema/schematic.py run_erc -x -w ./test-projects/warning-project/warning-project.sch output
   stage: test
   artifacts:
     reports:
