@@ -167,8 +167,9 @@ def eeschema_parse_erc(erc_file, warning_as_error=False, generate_junit_xml=Fals
             line = lines[i]
             logger.debug(line)
             if line.startswith('***** Sheet'):
-                if sheet:
+                if sheet is not None:
                     # Build test suite for previous sheet
+                    logger.debug('Adding test suite for {}'.format(sheet))
                     test_suites.append(TestSuite('ERC {}'.format(sheet), test_cases))
 
                 m = re.search('^\*\*\*\*\* Sheet (.+)$', line)
@@ -192,6 +193,10 @@ def eeschema_parse_erc(erc_file, warning_as_error=False, generate_junit_xml=Fals
                 test_case = TestCase('ERC rule {}'.format(error_type), sheet)
                 test_case.add_failure_info(message + ' '+line.strip(), failure_type=error_type)
                 test_cases.append(test_case)
+        if sheet is not None:
+            # Add last sheet
+            logger.debug('Adding final test suite for {}'.format(sheet))
+            test_suites.append(TestSuite('ERC {}'.format(sheet), test_cases))
 
         output_dir = os.path.dirname(erc_file)
         with open(output_dir+'/junit.xml', 'w') as f:
