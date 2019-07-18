@@ -39,12 +39,8 @@ test-erc-warning:
   tags:
     - runner-v11.2
   script:
-    - ./src/eeschema/schematic.py run_erc -x -w ./test-projects/warning-project/warning-project.sch output
+    - ./src/eeschema/schematic.py run_erc ./test-projects/warning-project/warning-project.sch output
   stage: test
-  artifacts:
-    reports:
-      junit: output/junit.xml
-    expire_in: 1 day
 
 export-schematic-pdf:
   image: productize/kicad-automation-base
