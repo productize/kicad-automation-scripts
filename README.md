@@ -24,7 +24,7 @@ different per version.
 The master branch and latest Docker tag will always be the latest supported
 stable KiCad version.
 
-## Instalation
+## Installation
 
 ### Using Docker
 
@@ -46,7 +46,7 @@ docker run --rm -it -v <path to a kicad project>:/kicad-project productize/kicad
 If you want to use these scripts directly on your system, you should be able to
 get it to work by installing the folowing dependencies:
 
-This tool has the folowing dependencies:
+This tool has the following dependencies:
 - KiCad
 - python
 - python-pip
@@ -56,7 +56,7 @@ This tool has the folowing dependencies:
 - xclip
 
 The Python dependencies (excluding KiCad) are listed in
-[eeschema/requirements.txt][eeschema/requirements.txt] an can be installed with
+[eeschema/requirements.txt][eeschema/requirements.txt] and can be installed with
 
 ```
 pip install -r eeschema/requirements.txt
@@ -123,7 +123,7 @@ docker run --rm -it -v <path to a kicad project>:/kicad-project -v `pwd`/src:/us
 ```
 
 The scripts can now be used the same way as in the main image, but changes
-on the host will automaticaly be reflected on the container (though note
+on the host will automatically be reflected on the container (though note
 that Python does not autoreload libraries).
 
 [KiCad]: http://kicad-pcb.org/
