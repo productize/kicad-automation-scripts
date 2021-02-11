@@ -76,8 +76,10 @@ can use the following commands:
 ### Run schematic ERC:
 
 ```
-python -m kicad-automation.eeschema.schematic run_erc /kicad-project/<some-schematic>.sch <build_dir> <svg or pdf> <all-pages (True or False)>
+python -m kicad-automation.eeschema.schematic run_erc /kicad-project/<some-schematic>.sch <build_dir>
 ```
+
+Add the flag `--warnings_as_errors` to make all warnings also return an error code of `1`.
 
 ### Export a schematic to PDF or SVG
 
