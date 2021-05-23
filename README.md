@@ -59,7 +59,7 @@ The Python dependencies (excluding KiCad) are listed in
 [eeschema/requirements.txt][eeschema/requirements.txt] and can be installed with
 
 ```
-pip install -r eeschema/requirements.txt
+pip install -r src/requirements.txt
 ```
 
 ### Installation on Ubuntu/Debian:
