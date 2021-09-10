@@ -74,7 +74,7 @@ def run_export(pcb_file, output_file, record=True):
             logger.info('File Menu')
             xdotool(['key', 'alt+f', 'x', 'Return'])
 
-            logger.info('Focus DRC modal window')
+            logger.info('Focus Export modal window')
             wait_for_window('Save', 'Specctra DSN File')
 
             logger.info('Pasting output file')
