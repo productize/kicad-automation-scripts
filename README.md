@@ -128,7 +128,7 @@ The scripts can now be used the same way as in the main image, but changes
 on the host will automatically be reflected on the container (though note
 that Python does not autoreload libraries).
 
-[KiCad]: http://kicad-pcb.org/
+[KiCad]: http://kicad.org/
 [xdotool]: https://github.com/jordansissel/xdotool
 [split-flap]: https://github.com/scottbez1/splitflap
 [scot's blog]: https://scottbezek.blogspot.be/2016/04/scripting-kicad-pcbnew-exports.html
